@@ -212,7 +212,7 @@ export default function SRSForm() {
         `
       };
   
-      const blob = await generateSRS(payload); // use api.js
+      const blob = await generateSRS(payload);
   
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
