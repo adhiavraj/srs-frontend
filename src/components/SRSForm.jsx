@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 import Preview from "./Preview";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { generateSRS } from "../api";
 
 const MAX_MEMBERS = 3;
 
