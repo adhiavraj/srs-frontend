@@ -178,42 +178,52 @@ export default function SRSForm() {
   };
 
   const downloadFromBackend = async () => {
+
     if (!autoExpandedContent) {
       alert("Generate the SRS first (click Generate SRS).");
       return;
     }
+
+    const backendHostApi = import.meta.env.VITE_API_URL;
   
     try {
-      const payload = {
-        cover: `
-          Title: ${autoExpandedContent.cover.title}
-          Project: ${autoExpandedContent.cover.projectName}
-          Description: ${autoExpandedContent.cover.description}
-          Members: ${autoExpandedContent.cover.members.join(", ")}
-          Date: ${autoExpandedContent.cover.date}
-        `,
-        introduction: `
-          Purpose: ${autoExpandedContent.introduction.purpose}
-          Scope: ${autoExpandedContent.introduction.scope}
-          Definitions: ${autoExpandedContent.introduction.definitions.map(d => `${d.term} = ${d.meaning}`).join("; ")}
-          References: ${autoExpandedContent.introduction.references}
-        `,
-        generalDescription: `
-          Product Perspective: ${autoExpandedContent.generalDescription.productPerspective}
-          Product Functions: ${autoExpandedContent.generalDescription.productFunctions}
-          User Characteristics: ${autoExpandedContent.generalDescription.userCharacteristics}
-          Constraints: ${autoExpandedContent.generalDescription.generalConstraints}
-          Assumptions/Dependencies: ${autoExpandedContent.generalDescription.assumptionsDependencies}
-        `,
-        specificRequirements: `
-          Functional Requirements: ${autoExpandedContent.specificRequirements.functionalRequirements.join(" | ")}
-          External Interfaces: ${autoExpandedContent.specificRequirements.externalInterfaceRequirements}
-          Non-Functional Requirements: ${autoExpandedContent.specificRequirements.nonFunctionalRequirements.join(" | ")}
-        `
-      };
+      const response = await fetch(`${backendHostApi}/api/generate-srs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cover: `
+            Title: ${autoExpandedContent.cover.title}
+            Project: ${autoExpandedContent.cover.projectName}
+            Description: ${autoExpandedContent.cover.description}
+            Members: ${autoExpandedContent.cover.members.join(", ")}
+            Date: ${autoExpandedContent.cover.date}
+          `,
+          introduction: `
+            Purpose: ${autoExpandedContent.introduction.purpose}
+            Scope: ${autoExpandedContent.introduction.scope}
+            Definitions: ${autoExpandedContent.introduction.definitions.map(d => `${d.term} = ${d.meaning}`).join("; ")}
+            References: ${autoExpandedContent.introduction.references}
+          `,
+          generalDescription: `
+            Product Perspective: ${autoExpandedContent.generalDescription.productPerspective}
+            Product Functions: ${autoExpandedContent.generalDescription.productFunctions}
+            User Characteristics: ${autoExpandedContent.generalDescription.userCharacteristics}
+            Constraints: ${autoExpandedContent.generalDescription.generalConstraints}
+            Assumptions/Dependencies: ${autoExpandedContent.generalDescription.assumptionsDependencies}
+          `,
+          specificRequirements: `
+            Functional Requirements: ${autoExpandedContent.specificRequirements.functionalRequirements.join(" | ")}
+            External Interfaces: ${autoExpandedContent.specificRequirements.externalInterfaceRequirements}
+            Non-Functional Requirements: ${autoExpandedContent.specificRequirements.nonFunctionalRequirements.join(" | ")}
+          `
+        }),
+      });
   
-      const blob = await generateSRS(payload);
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF from backend");
+      }
   
+      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -225,6 +235,7 @@ export default function SRSForm() {
       alert("Error downloading PDF from backend");
     }
   };
+  
   
   
 
