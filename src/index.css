@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-background: oklch(12.9% 0.042 264.695);
+  --color-primary: oklch(96.8% 0.007 247.896);
+  --color-formbody: oklch(20.8% 0.042 265.755);
+  --color-heading: oklch(98.4% 0.003 247.858);
+  --font-noto: "Noto Sans", sans-serif;
+}
+
+body {
+  font-family: var(--font-noto);
+}
+
+@layer components {
+  .preview-page {
+    background: var(--color-background);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  }
+}
