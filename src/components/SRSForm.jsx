@@ -1,8 +1,5 @@
 import React, { useState, useRef } from "react";
 import Preview from "./Preview";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
-
 const MAX_MEMBERS = 3;
 
 const example = {
@@ -118,62 +115,6 @@ export default function SRSForm() {
     setProjectName(example.projectName);
     setDescription(example.description);
     setMembers(example.members.slice(0, MAX_MEMBERS));
-  };
-
-  function fixColors(element) {
-    const elements = element.querySelectorAll("*");
-    elements.forEach(el => {
-      const styles = getComputedStyle(el);
-      ["color", "backgroundColor", "borderColor"].forEach(prop => {
-        const val = styles[prop];
-        if (val.includes("oklch")) {
-          el.style[prop] = "rgb(0,0,0)"; // fallback (or pick your own)
-        }
-      });
-    });
-  }
-
-  // PDF generation from previewRef
-  const exportToPDF = async () => {
-    if (!autoExpandedContent) {
-      alert("Generate the SRS first (click Generate SRS).");
-      return;
-    }
-    const input = document.getElementById("srs-preview");
-    if (!input) {
-      alert("Preview not ready.");
-      return;
-    }
-
-    // Apply color fix BEFORE rendering
-    fixColors(input);
-
-    const doc = new jsPDF("p", "mm", "a4");
-    const pdfWidth = doc.internal.pageSize.getWidth();
-    const pdfHeight = doc.internal.pageSize.getHeight();
-
-    const canvas = await html2canvas(input, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      windowWidth: input.scrollWidth,
-      windowHeight: input.scrollHeight
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-    const imgProps = doc.getImageProperties(imgData);
-    const imgWidth = pdfWidth;
-    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
-    if (imgHeight <= pdfHeight) {
-      doc.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    } else {
-      // pagination logic (can improve later if needed)
-      doc.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    }
-
-    doc.save(`${projectName || "project"}-SRS.pdf`);
   };
 
   const downloadFromBackend = async () => {
